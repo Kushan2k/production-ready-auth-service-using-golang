@@ -12,16 +12,21 @@ import (
 )
 
 type DataBaseService struct {
+	cfg *config.Config
 }
 
-func (db *DataBaseService) Connect(cfg *config.Config) (*gorm.DB, error) {
+func NewDatabaseService(cfg *config.Config) *DataBaseService {
+	return &DataBaseService{cfg: cfg}
+}
+
+func (db *DataBaseService) Connect() (*gorm.DB, error) {
 
 	dns := fmt.Sprintf("%s:%s@tcp(%s:%s)/%s?charset=utf8mb4&parseTime=True&loc=Local",
-		cfg.DB_User,
-		cfg.DB_Password,
-		cfg.DB_Host,
-		cfg.DB_Port,
-		cfg.DB_Name,
+		db.cfg.DB_User,
+		db.cfg.DB_Password,
+		db.cfg.DB_Host,
+		db.cfg.DB_Port,
+		db.cfg.DB_Name,
 	)
 
 	newLogger := logger.New(
