@@ -31,8 +31,16 @@ func (ac *AuthController) Register(c *fiber.Ctx) error {
 	return ac.service.RegisterUser(c)
 
 
-}
+}	
 
+// Login user
+// @Summary      user Login
+// @Description  Login an existing user with provided credentials
+// @Tags         Auth
+// @Accept       json
+// @Produce      json
+// @Param        request body models.LoginSchema true "User login payload" 
+// @Router       /login [post]
 func (ac *AuthController) Login(c *fiber.Ctx) error {
-	return c.SendString("User logged in")
+	return ac.service.LoginUser(c)
 }
