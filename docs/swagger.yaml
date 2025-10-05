@@ -11,6 +11,13 @@ definitions:
     - email
     - password
     type: object
+  models.ResendOtpSchema:
+    properties:
+      email:
+        type: string
+    required:
+    - email
+    type: object
   models.UserSchema:
     properties:
       confirm_password:
@@ -27,6 +34,18 @@ definitions:
     - email
     - name
     - password
+    type: object
+  models.VerifyOtpSchema:
+    properties:
+      email:
+        type: string
+      otp:
+        maxLength: 6
+        minLength: 6
+        type: string
+    required:
+    - email
+    - otp
     type: object
 host: localhost:8080
 info:
@@ -75,6 +94,42 @@ paths:
       - application/json
       responses: {}
       summary: Register a new user
+      tags:
+      - Auth
+  /resend-otp:
+    post:
+      consumes:
+      - application/json
+      description: Resend the OTP to user's email
+      parameters:
+      - description: Resend OTP payload
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/models.ResendOtpSchema'
+      produces:
+      - application/json
+      responses: {}
+      summary: Resend OTP
+      tags:
+      - Auth
+  /verify-otp:
+    post:
+      consumes:
+      - application/json
+      description: Verify the OTP sent to user's email
+      parameters:
+      - description: OTP verification payload
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/models.VerifyOtpSchema'
+      produces:
+      - application/json
+      responses: {}
+      summary: Verify OTP
       tags:
       - Auth
 swagger: "2.0"

@@ -11,6 +11,8 @@ type User struct {
 	Name     string `gorm:"size:100;not null"`
 	Email    string `gorm:"size:100;uniqueIndex;not null"`
 	Password string `gorm:"size:8,not null"`
+	Otp      string `gorm:"size:6;null"`
+	IsVerified bool   `gorm:"default:false"`
 }
 
 
@@ -21,4 +23,5 @@ type SwaggerUser struct {
     DeletedAt *time.Time `json:"deleted_at,omitempty"`
     Name      string    `json:"name"`
     Email     string    `json:"email"`
+		IsVerified bool      `json:"is_verified"`
 }
