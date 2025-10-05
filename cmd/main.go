@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"github/go_auth_api/internal/config"
 	"github/go_auth_api/internal/db"
+	"github/go_auth_api/internal/middlewares"
 	"github/go_auth_api/internal/models"
 	"github/go_auth_api/internal/router"
 
@@ -34,21 +35,24 @@ func main() {
 	gormDB.AutoMigrate(&models.User{})
 
 	fmt.Println("Connected to database successfully!")
+	error_handler := middlewares.NewErrorHandler(cfg)
 
 	app := fiber.New(
 		fiber.Config{
 			Prefork:       false,
 			CaseSensitive: true,
 			StrictRouting: true,
+			ErrorHandler:  error_handler.HandleError,
 		},
 	)
+
 
 	api := app.Group("/api")
 
 	auth_routes := router.NewAuthRouter(&api, gormDB, cfg)
 	auth_routes.SetupRoutes()
 
-	if err := app.Listen(fmt.Sprintf(":%s", cfg.Server_Port)); err != nil {
+	if err := app.Listen(fmt.Sprintf(":%s", cfg.SERVER_PORT)); err != nil {
 		fmt.Println("Error starting server:", err)
 		return
 	}
