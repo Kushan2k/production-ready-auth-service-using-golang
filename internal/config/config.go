@@ -13,8 +13,9 @@ type Config struct {
 	DB_User     string
 	DB_Password string
 	DB_Name     string
-	Server_Port string
-	JWT_Secret  string
+	SERVER_PORT string
+	JWT_SECRET  string
+	DEBUG       bool
 }
 
 func LoadConfig() (*Config, error) {
@@ -32,10 +33,12 @@ func LoadConfig() (*Config, error) {
 		DB_User:     getEnv("DB_USER", "root"),
 		DB_Password: getEnv("DB_PASSWORD", ""),
 		DB_Name:     getEnv("DB_NAME", "auth_api"),
-		Server_Port: getEnv("SERVER_PORT", "8080"),
-		JWT_Secret:  getEnv("JWT_SECRET", "secret"),
+		SERVER_PORT: getEnv("SERVER_PORT", "8080"),
+		JWT_SECRET:  getEnv("JWT_SECRET", "secret"),
+		DEBUG:       getEnv("DEBUG", "true") == "true",
 	}, nil
 }
+
 
 func getEnv(key, defaultValue string) string {
 
