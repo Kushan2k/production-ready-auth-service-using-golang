@@ -3,6 +3,7 @@ package services
 import (
 	"github/go_auth_api/internal/config"
 	"github/go_auth_api/internal/models"
+	"github/go_auth_api/internal/utils"
 
 	"github.com/gofiber/fiber/v2"
 	"golang.org/x/crypto/bcrypt"
@@ -61,6 +62,33 @@ func (s *AuthService) RegisterUser(c *fiber.Ctx) error {
 }
 
 func (s *AuthService) LoginUser(c *fiber.Ctx) error {
-	// Implement user login logic here
-	return c.SendString("User logged in")
+	
+
+	login_user:=new(models.LoginSchema)
+
+	if err:=c.BodyParser(login_user);err!=nil{
+		return fiber.NewError(fiber.StatusBadRequest,err.Error())
+	}
+
+	var user models.User
+	if err:=s.DB.Where("email = ?", login_user.Email).First(&user).Error;err!=nil{
+		return fiber.NewError(fiber.StatusUnauthorized,"Invalid email or password")
+	}
+
+	if err:=bcrypt.CompareHashAndPassword([]byte(user.Password),[]byte(login_user.Password));err!=nil{
+		return fiber.NewError(fiber.StatusUnauthorized,"Invalid email or password")
+	}
+
+	token,err:=utils.GenerateJWT(&user,s.cfg.JWT_SECRET)
+
+	if err!=nil {
+		return fiber.NewError(fiber.StatusInternalServerError,"Error generating token")
+	}
+	
+	return c.Status(fiber.StatusOK).JSON(fiber.Map{
+		"message":"Login successful",
+		"token":token,
+		"status":fiber.StatusOK,
+	})
+
 }
