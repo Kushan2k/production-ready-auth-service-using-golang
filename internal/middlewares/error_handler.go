@@ -1,6 +1,7 @@
 package middlewares
 
 import (
+	"errors"
 	"github/go_auth_api/internal/config"
 	"runtime/debug"
 
@@ -20,11 +21,20 @@ func NewErrorHandler(cfg *config.Config) *ErrorHandler {
 
 func (h *ErrorHandler) HandleError(c *fiber.Ctx, err error) error {
 
+	// Status code defaults to 500
+    code := fiber.StatusInternalServerError
+
+    // Retrieve the custom status code if it's a *fiber.Error
+    var e *fiber.Error
+    if errors.As(err, &e) {
+        code = e.Code
+    }
+
 	error_map:=fiber.Map{
 		"message": err.Error(),
-		"status":fiber.StatusInternalServerError,
-		
+		"status": code,
 	}
+
 
 	if h.cfg.DEBUG {
 		error_map["stack"]=debug.Stack()
