@@ -1,5 +1,16 @@
 basePath: /api/v1/auth
 definitions:
+  models.LoginSchema:
+    properties:
+      email:
+        type: string
+      password:
+        minLength: 6
+        type: string
+    required:
+    - email
+    - password
+    type: object
   models.UserSchema:
     properties:
       confirm_password:
@@ -30,6 +41,24 @@ info:
   title: Fiber Authentication API
   version: "1.0"
 paths:
+  /login:
+    post:
+      consumes:
+      - application/json
+      description: Login an existing user with provided credentials
+      parameters:
+      - description: User login payload
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/models.LoginSchema'
+      produces:
+      - application/json
+      responses: {}
+      summary: user Login
+      tags:
+      - Auth
   /register:
     post:
       consumes:
