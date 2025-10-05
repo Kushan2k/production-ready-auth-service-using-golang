@@ -1,0 +1,51 @@
+basePath: /api/v1/auth
+definitions:
+  models.UserSchema:
+    properties:
+      confirm_password:
+        type: string
+      email:
+        type: string
+      name:
+        type: string
+      password:
+        minLength: 6
+        type: string
+    required:
+    - confirm_password
+    - email
+    - name
+    - password
+    type: object
+host: localhost:8080
+info:
+  contact:
+    email: kushangayantha001@gmail.com
+    name: API Support
+  description: This is a sample swagger for Fiber
+  license:
+    name: MIT
+    url: http://opensource.org/licenses/MIT
+  termsOfService: http://swagger.io/terms/
+  title: Fiber Authentication API
+  version: "1.0"
+paths:
+  /register:
+    post:
+      consumes:
+      - application/json
+      description: Register a new user with provided details
+      parameters:
+      - description: User registration payload
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/models.UserSchema'
+      produces:
+      - application/json
+      responses: {}
+      summary: Register a new user
+      tags:
+      - Auth
+swagger: "2.0"

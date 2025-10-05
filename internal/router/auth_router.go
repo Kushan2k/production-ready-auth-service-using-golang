@@ -28,6 +28,7 @@ func (ar *AuthRouter) SetupRoutes() {
 	controller := controllers.NewAuthController(service)
 
 	ar.Group.Post("/register", controller.Register)
+
 	ar.Group.Post("/login", controller.Login)
 
 }

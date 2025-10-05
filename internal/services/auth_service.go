@@ -41,6 +41,7 @@ func (s *AuthService) RegisterUser(c *fiber.Ctx) error {
 	user := &models.User{
 		Email:    new_user.Email,
 		Password: string(pw_hash),
+		Name: 	 new_user.Name,
 	}
 
 	if err := s.DB.Create(user).Error; err != nil {
@@ -49,7 +50,12 @@ func (s *AuthService) RegisterUser(c *fiber.Ctx) error {
 
 	return c.Status(fiber.StatusCreated).JSON(fiber.Map{
 		"message": "User registered successfully",
-		"user":user,
+		"user": fiber.Map{
+			"id":    user.ID,
+			"email": user.Email,
+			"created_at": user.CreatedAt,
+			"updated_at": user.UpdatedAt,
+		},
 		"status":fiber.StatusCreated,
 	})
 }
