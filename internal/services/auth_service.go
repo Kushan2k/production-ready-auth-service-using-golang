@@ -1,9 +1,11 @@
 package services
 
 import (
+	"bytes"
 	"github/go_auth_api/internal/config"
 	"github/go_auth_api/internal/models"
 	"github/go_auth_api/internal/utils"
+	"html/template"
 
 	"github.com/gofiber/fiber/v2"
 	"golang.org/x/crypto/bcrypt"
@@ -52,12 +54,26 @@ func (s *AuthService) RegisterUser(c *fiber.Ctx) error {
 	mailer:=utils.GetMailer()
 	msg:=utils.GetMessage()
 
-	msg.SetHeader("From", config.Envs.MAIL_USERNAME)
-	msg.SetHeader("To", new_user.Email)
-	msg.SetHeader("Subject", "Welcome to Our Service")
-	msg.SetBody("text/plain", "Thank you for registering!")
+	t,err:=template.ParseFiles("./internal/emails/register_email.html")
 
-	go mailer.DialAndSend(msg)
+	if err ==nil {
+		var data bytes.Buffer
+
+		//Customize what you are passing to the email template
+		//For example, you can pass the verification code or user name
+		//Here, we are passing the user model with Name and Email fields
+		//You can modify the template to use these fields as needed
+		if err:=t.Execute(&data,user);err==nil{
+			msg.SetBody("text/html",data.String())
+		}
+		msg.SetHeader("From", config.Envs.MAIL_USERNAME)
+		msg.SetHeader("To", new_user.Email)
+		msg.SetHeader("Subject", "Welcome to Our Service")
+
+		go mailer.DialAndSend(msg)
+	}
+
+	
 
 	return c.Status(fiber.StatusCreated).JSON(fiber.Map{
 		"message": "User registered successfully",
