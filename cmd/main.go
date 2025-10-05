@@ -1,3 +1,13 @@
+// @title Fiber Authentication API
+// @version 1.0
+// @description This is a sample swagger for Fiber
+// @termsOfService http://swagger.io/terms/
+// @contact.name API Support
+// @contact.email kushangayantha001@gmail.com
+// @license.name MIT
+// @license.url http://opensource.org/licenses/MIT
+// @host localhost:8080
+// @BasePath /api/v1/auth
 package main
 
 import (
@@ -8,8 +18,13 @@ import (
 	"github/go_auth_api/internal/models"
 	"github/go_auth_api/internal/router"
 
+	"github.com/gofiber/swagger"
+
+	_ "github/go_auth_api/docs"
+
 	"github.com/gofiber/fiber/v2"
 )
+
 
 func main() {
 	// Entry point of the application
@@ -45,9 +60,10 @@ func main() {
 			ErrorHandler:  error_handler.HandleError,
 		},
 	)
+	app.Get("/docs/*", swagger.HandlerDefault)
 
 
-	api := app.Group("/api")
+	api := app.Group("/api/v1/auth")
 
 	auth_routes := router.NewAuthRouter(api, gormDB, cfg)
 	auth_routes.SetupRoutes()

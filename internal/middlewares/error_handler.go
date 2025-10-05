@@ -42,3 +42,10 @@ func (h *ErrorHandler) HandleError(c *fiber.Ctx, err error) error {
 	
 	return c.Status(fiber.StatusInternalServerError).JSON(error_map)
 }
+
+
+type ErrorResponse struct {
+	Message string `json:"message"`
+	Status  int    `json:"status"`
+	Stack   string `json:"stack,omitempty"`
+}
