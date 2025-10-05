@@ -9,6 +9,7 @@ import (
 	"html/template"
 	"math/big"
 
+	"github.com/go-playground/validator/v10"
 	"github.com/gofiber/fiber/v2"
 	"golang.org/x/crypto/bcrypt"
 	"gorm.io/gorm"
@@ -33,6 +34,13 @@ func (s *AuthService) RegisterUser(c *fiber.Ctx) error {
 	if err:=c.BodyParser(new_user);err!=nil{
 		return fiber.NewError(fiber.StatusBadRequest,err.Error())
 	}
+
+	validate :=validator.New()
+
+	if err:=validate.Struct(new_user);err!=nil{
+		return fiber.NewError(fiber.StatusBadRequest,err.Error())
+	}
+	
 
 	if new_user.Password!=new_user.ConfirmPassword {
 		return fiber.NewError(fiber.StatusBadRequest,"Password and Confirm Password do not match")
@@ -176,6 +184,8 @@ func (s *AuthService) ResendOtp(c *fiber.Ctx) error {
 	if err:=c.BodyParser(resend_schema);err!=nil{
 		return fiber.NewError(fiber.StatusBadRequest,err.Error())
 	}
+
+
 
 	var user models.User
 	if err:=s.DB.Where("email = ?", resend_schema.Email).First(&user).Error;err!=nil{
