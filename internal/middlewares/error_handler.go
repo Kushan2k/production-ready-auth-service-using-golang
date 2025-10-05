@@ -37,7 +37,7 @@ func (h *ErrorHandler) HandleError(c *fiber.Ctx, err error) error {
 
 
 	if h.cfg.DEBUG {
-		error_map["stack"]=debug.Stack()
+		error_map["stack"]=string(debug.Stack())
 	}
 	
 	return c.Status(fiber.StatusInternalServerError).JSON(error_map)

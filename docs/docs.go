@@ -23,6 +23,33 @@ const docTemplate = `{
     "host": "{{.Host}}",
     "basePath": "{{.BasePath}}",
     "paths": {
+        "/login": {
+            "post": {
+                "description": "Login an existing user with provided credentials",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Auth"
+                ],
+                "summary": "user Login",
+                "parameters": [
+                    {
+                        "description": "User login payload",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/models.LoginSchema"
+                        }
+                    }
+                ],
+                "responses": {}
+            }
+        },
         "/register": {
             "post": {
                 "description": "Register a new user with provided details",
@@ -49,9 +76,90 @@ const docTemplate = `{
                 ],
                 "responses": {}
             }
+        },
+        "/resend-otp": {
+            "post": {
+                "description": "Resend the OTP to user's email",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Auth"
+                ],
+                "summary": "Resend OTP",
+                "parameters": [
+                    {
+                        "description": "Resend OTP payload",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/models.ResendOtpSchema"
+                        }
+                    }
+                ],
+                "responses": {}
+            }
+        },
+        "/verify-otp": {
+            "post": {
+                "description": "Verify the OTP sent to user's email",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Auth"
+                ],
+                "summary": "Verify OTP",
+                "parameters": [
+                    {
+                        "description": "OTP verification payload",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/models.VerifyOtpSchema"
+                        }
+                    }
+                ],
+                "responses": {}
+            }
         }
     },
     "definitions": {
+        "models.LoginSchema": {
+            "type": "object",
+            "required": [
+                "email",
+                "password"
+            ],
+            "properties": {
+                "email": {
+                    "type": "string"
+                },
+                "password": {
+                    "type": "string",
+                    "minLength": 6
+                }
+            }
+        },
+        "models.ResendOtpSchema": {
+            "type": "object",
+            "required": [
+                "email"
+            ],
+            "properties": {
+                "email": {
+                    "type": "string"
+                }
+            }
+        },
         "models.UserSchema": {
             "type": "object",
             "required": [
@@ -72,6 +180,23 @@ const docTemplate = `{
                 },
                 "password": {
                     "type": "string",
+                    "minLength": 6
+                }
+            }
+        },
+        "models.VerifyOtpSchema": {
+            "type": "object",
+            "required": [
+                "email",
+                "otp"
+            ],
+            "properties": {
+                "email": {
+                    "type": "string"
+                },
+                "otp": {
+                    "type": "string",
+                    "maxLength": 6,
                     "minLength": 6
                 }
             }

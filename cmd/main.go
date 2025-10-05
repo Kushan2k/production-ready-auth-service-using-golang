@@ -18,6 +18,8 @@ import (
 	"github/go_auth_api/internal/models"
 	"github/go_auth_api/internal/router"
 
+	"github.com/gofiber/template/html/v2"
+
 	"github.com/gofiber/swagger"
 
 	_ "github/go_auth_api/docs"
@@ -52,12 +54,15 @@ func main() {
 	fmt.Println("Connected to database successfully!")
 	error_handler := middlewares.NewErrorHandler(cfg)
 
+	engine:=html.New("./internal/emails", ".html")
+
 	app := fiber.New(
 		fiber.Config{
 			Prefork:       false,
 			CaseSensitive: true,
 			StrictRouting: true,
 			ErrorHandler:  error_handler.HandleError,
+			Views:         engine,
 		},
 	)
 	app.Get("/docs/*", swagger.HandlerDefault)

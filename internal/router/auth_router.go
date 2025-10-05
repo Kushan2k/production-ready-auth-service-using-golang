@@ -31,4 +31,8 @@ func (ar *AuthRouter) SetupRoutes() {
 
 	ar.Group.Post("/login", controller.Login)
 
+	ar.Group.Post("/verify-otp", controller.VerifyOtp)
+
+	ar.Group.Post("/resend-otp", controller.ResendOtp)
+
 }

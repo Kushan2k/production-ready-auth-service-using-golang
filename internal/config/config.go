@@ -3,6 +3,7 @@ package config
 import (
 	"log"
 	"os"
+	"strconv"
 
 	"github.com/joho/godotenv"
 )
@@ -16,7 +17,14 @@ type Config struct {
 	SERVER_PORT string
 	JWT_SECRET  string
 	DEBUG       bool
+
+	MAIL_HOST     string
+	MAIL_PORT     int
+	MAIL_USERNAME string
+	MAIL_PASSWORD string
 }
+
+var Envs=loadEnvs()
 
 func LoadConfig() (*Config, error) {
 
@@ -36,7 +44,25 @@ func LoadConfig() (*Config, error) {
 		SERVER_PORT: getEnv("SERVER_PORT", "8080"),
 		JWT_SECRET:  getEnv("JWT_SECRET", "secret"),
 		DEBUG:       getEnv("DEBUG", "true") == "true",
+		MAIL_HOST:     getEnv("MAIL_HOST", ""),
+		MAIL_PORT:    func() int {
+			port, err := strconv.Atoi(getEnv("MAIL_PORT", "465"))
+			if err != nil {
+				return 465
+			}
+			return port
+		}(),
+		MAIL_USERNAME: getEnv("MAIL_USERNAME", ""),
+		MAIL_PASSWORD: getEnv("MAIL_PASSWORD", ""),
 	}, nil
+}
+
+func loadEnvs() Config {
+	cfg, err := LoadConfig()
+	if err != nil {
+		log.Fatalf("Error loading config: %v", err)
+	}
+	return *cfg
 }
 
 
