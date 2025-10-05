@@ -10,12 +10,12 @@ import (
 )
 
 type AuthRouter struct {
-	Group *fiber.Router
+	Group fiber.Router
 	DB    *gorm.DB
 	cfg   *config.Config
 }
 
-func NewAuthRouter(group *fiber.Router, db *gorm.DB, cfg *config.Config) *AuthRouter {
+func NewAuthRouter(group fiber.Router, db *gorm.DB, cfg *config.Config) *AuthRouter {
 	return &AuthRouter{
 		Group: group,
 		DB:    db,
@@ -25,6 +25,9 @@ func NewAuthRouter(group *fiber.Router, db *gorm.DB, cfg *config.Config) *AuthRo
 
 func (ar *AuthRouter) SetupRoutes() {
 	service := services.NewAuthService(ar.DB, ar.cfg)
-	_ = controllers.NewAuthController(service)
+	controller := controllers.NewAuthController(service)
+
+	ar.Group.Post("/register", controller.Register)
+	ar.Group.Post("/login", controller.Login)
 
 }
