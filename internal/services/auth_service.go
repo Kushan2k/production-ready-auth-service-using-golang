@@ -49,6 +49,16 @@ func (s *AuthService) RegisterUser(c *fiber.Ctx) error {
 		return fiber.NewError(fiber.StatusInternalServerError, "Error creating user")
 	}
 
+	mailer:=utils.GetMailer()
+	msg:=utils.GetMessage()
+
+	msg.SetHeader("From", config.Envs.MAIL_USERNAME)
+	msg.SetHeader("To", new_user.Email)
+	msg.SetHeader("Subject", "Welcome to Our Service")
+	msg.SetBody("text/plain", "Thank you for registering!")
+
+	go mailer.DialAndSend(msg)
+
 	return c.Status(fiber.StatusCreated).JSON(fiber.Map{
 		"message": "User registered successfully",
 		"user": fiber.Map{
