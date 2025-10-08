@@ -21,3 +21,20 @@ func  GetMailer() *gomail.Dialer {
 func GetMessage() *gomail.Message {
 	return gomail.NewMessage()
 }
+
+func SendMail(body string, to string, subject string,res_chan_error chan<- bool) {
+	mailer := GetMailer()
+	msg := GetMessage()
+
+	msg.SetBody("text/html", body)
+	msg.SetHeader("From", config.Envs.MAIL_USERNAME)
+	msg.SetHeader("To", to)
+	msg.SetHeader("Subject", subject)
+
+	err:=mailer.DialAndSend(msg)
+	if err != nil {
+		res_chan_error<-true
+	}else{
+		res_chan_error<-false
+	}
+}
