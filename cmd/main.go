@@ -63,6 +63,7 @@ func main() {
 			StrictRouting: true,
 			ErrorHandler:  error_handler.HandleError,
 			Views:         engine,
+			
 		},
 	)
 	app.Get("/docs/*", swagger.HandlerDefault)

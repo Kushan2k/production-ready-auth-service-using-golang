@@ -1,0 +1,7 @@
+#Resent OTP Req 
+POST http://localhost:8080/api/v1/auth/resend-otp
+Content-Type: application/json
+
+{
+  "email":"kusss@gmail.com"
+}
