@@ -173,21 +173,22 @@ func (s *AuthService) VerifyViaOtp(c *fiber.Ctx) error {
 		return fiber.NewError(fiber.StatusInternalServerError, "Error verifying OTP")
 	}
 
-	//send email on successful verification
-	mailer := utils.GetMailer()
-	msg := utils.GetMessage()
+	error_chan := make(chan bool)
+	defer close(error_chan)
+	go utils.SendMail("<h1>Your email has been verified successfully. You can now log in to your account.</h1>", verify_req.Email, "Email Verified Successfully", error_chan)
 
-	msg.SetBody("text/html", "<h1>Your email has been verified successfully. You can now log in to your account.</h1>")
-	msg.SetHeader("From", config.Envs.MAIL_USERNAME)
-	msg.SetHeader("To", verify_req.Email)
-	msg.SetHeader("Subject", "Email Verified Successfully")
-
-	go mailer.DialAndSend(msg)
-
-	return c.Status(fiber.StatusOK).JSON(fiber.Map{
+	res:=fiber.Map{
 		"message": "OTP verified successfully",
 		"status":  fiber.StatusOK,
-	})
+	}
+
+	if <-error_chan {
+		res["message"] = "OTP verified successfully, but failed to send confirmation email"
+	}else {
+		res["message"] = "OTP verified successfully"
+	}
+
+	return c.Status(fiber.StatusOK).JSON(res)
 }
 
 func (s *AuthService) ResendOtp(c *fiber.Ctx) error {
@@ -219,15 +220,15 @@ func (s *AuthService) ResendOtp(c *fiber.Ctx) error {
 	}
 
 	//send email on successful verification
-	mailer := utils.GetMailer()
-	msg := utils.GetMessage()
+	channel_err := make(chan bool)
+	defer close(channel_err)
 
-	msg.SetBody("text/html", "<h1>Your OTP is "+user.Otp+"</h1>")
-	msg.SetHeader("From", config.Envs.MAIL_USERNAME)
-	msg.SetHeader("To", resend_schema.Email)
-	msg.SetHeader("Subject", "Resend OTP")
+	go utils.SendMail("<h1>Your OTP is: "+user.Otp+"</h1>", user.Email, "Resend OTP", channel_err)
 
-	go mailer.DialAndSend(msg)
+	if <-channel_err {
+		return fiber.NewError(fiber.StatusInternalServerError, "Error sending OTP email")
+	}
+	
 	return c.Status(fiber.StatusOK).JSON(fiber.Map{
 		"message": "OTP resent successfully",
 		"status":  fiber.StatusOK,
