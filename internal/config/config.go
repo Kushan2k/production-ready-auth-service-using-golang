@@ -31,7 +31,7 @@ func LoadConfig() (*Config, error) {
 	err := godotenv.Load()
 
 	if err != nil {
-		log.Fatalln("No .env file found, using environment variables or defaults")
+		log.Println("No .env file found, using environment variables or defaults")
 		
 	}
 
