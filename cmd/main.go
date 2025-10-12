@@ -74,9 +74,9 @@ func main() {
 	auth_routes := router.NewAuthRouter(api, gormDB, cfg)
 	auth_routes.SetupRoutes()
 
-	if err := app.Listen(fmt.Sprintf(":%s", cfg.SERVER_PORT)); err != nil {
-		fmt.Println("Error starting server:", err)
-		return
-	}
+	// if err := app.Listen(fmt.Sprintf(":%s", cfg.SERVER_PORT)); err != nil {
+	// 	fmt.Println("Error starting server:", err)
+	// 	return
+	// }
 
 }
