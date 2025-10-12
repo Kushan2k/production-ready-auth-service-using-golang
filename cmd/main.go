@@ -17,6 +17,7 @@ import (
 	"github/go_auth_api/internal/middlewares"
 	"github/go_auth_api/internal/models"
 	"github/go_auth_api/internal/router"
+	"log"
 
 	"github.com/gofiber/template/html/v2"
 
@@ -63,6 +64,7 @@ func main() {
 			StrictRouting: true,
 			ErrorHandler:  error_handler.HandleError,
 			Views:         engine,
+			
 		},
 	)
 	app.Get("/docs/*", swagger.HandlerDefault)
@@ -73,9 +75,11 @@ func main() {
 	auth_routes := router.NewAuthRouter(api, gormDB, cfg)
 	auth_routes.SetupRoutes()
 
-	if err := app.Listen(fmt.Sprintf(":%s", cfg.SERVER_PORT)); err != nil {
-		fmt.Println("Error starting server:", err)
-		return
+	// Start server
+	port := fmt.Sprintf(":%s", cfg.SERVER_PORT)
+	fmt.Println("🌍 Server running on port", port)
+	if err := app.Listen(port); err != nil {
+		log.Fatalf("❌ Error starting server: %v", err)
 	}
 
 }
